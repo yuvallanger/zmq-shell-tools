@@ -1,20 +1,21 @@
 import sys
+
+import click
 import zmq
 
-def mainloop(addr):
+
+@click.command()
+@click.argument('address')
+def main(address):
     """foo"""
     ctx = zmq.Context()
     socket = ctx.socket(zmq.PUSH)
-    socket.bind(addr)
-    
+    socket.bind(address)
+
     for line in sys.stdin:
-        socket.send(line)
-        print "->", line,
-    
+        socket.send(line.encode())
+
     socket.close()
-        
-def main():
-    mainloop(sys.argv[1])
 
 if __name__ == '__main__':
     main()

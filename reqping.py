@@ -1,21 +1,34 @@
 import sys
-import zmq
+import logging
 
-def main(addr, sender):
+import zmq
+import click
+
+
+logging.basicConfig(level=logging.DEBUG)
+
+@click.command()
+@click.option('--address')
+@click.option('--sender')
+def main(address, sender):
     """foo"""
+
+    logging.info(address, sender)
 
     ctx = zmq.Context()
     socket = ctx.socket(zmq.REQ)
-    socket.connect(addr)
+    socket.connect(address)
 
     k = 0
     while True:
-        socket.send("Message %d from %s" % (k, sender))
-        print socket.recv()
+        message = "Message {} from {}".format(k, sender)
+        logging.info(message)
+        socket.send(message.encode())
+        logging.info(socket.recv().decode())
         k += 1
 
     socket.close()
-        
-        
+
+
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
+    main()
